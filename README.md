@@ -2,7 +2,7 @@
 To compile the sources into a pdf
 ```
 $ git clone git@github.com:kyledpierson/kyle-thesis.git
-$ cd kyle-thesis
+$ cd kyle-thesis/latex
 $ make
 ```
  
