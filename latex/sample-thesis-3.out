@@ -1,0 +1,35 @@
+\BOOKMARK [0][-]{Doc-Start}{Abstract}{}% 1
+\BOOKMARK [0][-]{Doc-Start}{LIST OF FIGURES}{}% 2
+\BOOKMARK [0][-]{Doc-Start}{LIST OF TABLES}{}% 3
+\BOOKMARK [0][-]{Doc-Start}{Notation and Symbols}{}% 4
+\BOOKMARK [0][-]{chapter.1}{=10000=10000=0 Introduction}{}% 5
+\BOOKMARK [1][-]{section.1.1}{Machine learning models}{chapter.1}% 6
+\BOOKMARK [2][-]{subsection.1.1.1}{Support vector machine}{section.1.1}% 7
+\BOOKMARK [2][-]{subsection.1.1.2}{Support vector regression}{section.1.1}% 8
+\BOOKMARK [2][-]{subsection.1.1.3}{Artificial neural networks}{section.1.1}% 9
+\BOOKMARK [2][-]{subsection.1.1.4}{Convolutional neural networks}{section.1.1}% 10
+\BOOKMARK [2][-]{subsection.1.1.5}{Ensemble methods}{section.1.1}% 11
+\BOOKMARK [2][-]{subsection.1.1.6}{Decision trees}{section.1.1}% 12
+\BOOKMARK [2][-]{subsection.1.1.7}{Random forests}{section.1.1}% 13
+\BOOKMARK [1][-]{section.1.2}{Supplementary terms and procedures}{chapter.1}% 14
+\BOOKMARK [2][-]{subsection.1.2.1}{Principal component analysis}{section.1.2}% 15
+\BOOKMARK [2][-]{subsection.1.2.2}{Correlation}{section.1.2}% 16
+\BOOKMARK [2][-]{subsection.1.2.3}{Cross validation}{section.1.2}% 17
+\BOOKMARK [2][-]{subsection.1.2.4}{Error metrics}{section.1.2}% 18
+\BOOKMARK [1][-]{section.1.3}{Machine learning approach}{chapter.1}% 19
+\BOOKMARK [0][-]{chapter.2}{=10000=10000=0 Crack front prediction under cyclical loading}{}% 20
+\BOOKMARK [1][-]{section.2.1}{Data acquisition via experimentation}{chapter.2}% 21
+\BOOKMARK [1][-]{section.2.2}{Feature extraction}{chapter.2}% 22
+\BOOKMARK [1][-]{section.2.3}{Model training}{chapter.2}% 23
+\BOOKMARK [1][-]{section.2.4}{Leave-one-front-out \(LOFO\)}{chapter.2}% 24
+\BOOKMARK [1][-]{section.2.5}{Leave-one-wedge-out \(LOWO\)}{chapter.2}% 25
+\BOOKMARK [1][-]{section.2.6}{Results}{chapter.2}% 26
+\BOOKMARK [1][-]{section.2.7}{Conclusion}{chapter.2}% 27
+\BOOKMARK [0][-]{chapter.3}{=10000=10000=0 Data-Driven Correlation Analysis Between Observed 3D Fatigue-Crack Path and Computed Fields from High-Fidelity, Crystal-Plasticity, Finite-Element Simulations}{}% 28
+\BOOKMARK [0][-]{chapter.4}{=10000=10000=0 Inference of position and growth rate for all points on the crack surface}{}% 29
+\BOOKMARK [1][-]{section.4.1}{Data preprocessing}{chapter.4}% 30
+\BOOKMARK [1][-]{section.4.2}{General strategy}{chapter.4}% 31
+\BOOKMARK [1][-]{section.4.3}{Crack surface height inference}{chapter.4}% 32
+\BOOKMARK [1][-]{section.4.4}{Crack-surface height inference based on a radial prediction strategy}{chapter.4}% 33
+\BOOKMARK [1][-]{section.4.5}{Conclusion}{chapter.4}% 34
+\BOOKMARK [0][-]{section.Alph0.1}{Topic Index}{}% 35

@@ -1,0 +1,196 @@
+%%% -*-LaTeX-*-
+
+\chapter{Introduction}
+
+Predicting how a crack propagates in three dimensions at the scale of the material microstructure is a challenging and open-ended problem.  The abstract notion of crack propagation could be decomposed of any number of concrete variables: the rate at which a particular point at the crack front is growing at a particular time and in a particular direction, the position of the next crack front measured at the start of the next cyclic-loading interval, the positions that a point on the crack front is expected to occupy between loading intervals, etc.  The intricacies of each of these variables are too complex to solve in the scope of this thesis.  Instead, only a few are considered, which are thought to be meaningful and relevant.  The goal, then, is to make accurate predictions of the chosen response variable using some knowledge about how the crack has previously grown, and the values of the material's properties that are thought to affect the response.  This approach is a form of machine learning, a field of study that has gained popularity in a variety of disciplines.
+
+Many attempts have been made to fuse machine learning with materials science.  In Ref. \cite{kalidindi2015}, an overall strategy for incorporating data-driven modeling with materials science was presented.  Aspects of this strategy included data storage, management, and sharing, as well as formatting data as process-structure-property (PSP) linkages.  These linkages provided relationships between the process parameters, the material structure, and the material properties, with the goal of being able to predict structure from process and properties from structure.  Kalidindi then built on his work in Ref. \cite{kalidindi2016} by outlining how this strategy could improve materials innovation and manufacturing.
+
+Several concrete problems have also been approached with machine learning in mind.  In Ref. \cite{agrawal2014}, the authors approached the problem of predicting the fatigue strength of steel based on the samples' time and temperature of the diffusion, carburizing, hardening, and tempering phases, among other composition and processing parameters.  They experimented with models ranging from polynomial regression to neural networks, and were able to achieve $R^2$ values of close to 0.98.  Fatigue crack growth calculation was addressed specifically in Ref. \cite{wang2017}, where specialized neural networks were used to predict the relationship between stress intensity factor range ($\Delta K$) and crack growth rate ($da/dN$).  In Ref. \cite{zio2012}, a more refined technique called Revelance Vector Machine (RVM) was applied to the problem of predicting the remaining useful life (RUL) of a safety-critical component.   Recently, Spear et al., \cite{spear2018} provided an overview of the challenges and opportunities that exist for leveraging machine learning to address problems associated with fatigue of materials.
+
+Numerous machine learning models exist for predicting a response based on prior experience.  All of them operate under the same premise: given a known dataset, the model uses some subset of the data to train itself to provide predictions that are consistent with the training data.  Typically, a single variable from the dataset is chosen as the value to be predicted, but multiple variables can also be chosen.  Then, the rest of the data is used to test the accuracy of the model's predictions against the known values of the response variable in the test set.  If the response variable is categorical, then the problem is known as a classification problem, and accuracy can be measured either by taking the number of times the prediction matched the ground truth as a fraction of the total number of test samples, or by using a more sophisticated metric such as F1 score.  If the response variable is a continuous, real number, then the problem is known as a regression problem, and accuracy can be measured using a metric such as root mean squared error (RMSE) or $R^2$.
+
+\section{Machine learning models}
+
+In an attempt to make this thesis reasonably self-contained, a brief survey of relevant machine learning algorithms is presented.  The objective of this chapter is to familiarize the reader with the verbiage and notation used throughout the rest of this thesis.
+
+\subsection{Support vector machine}
+\index{Support vector machine}
+One of the most intuitive machine learning methods is the support vector machine (SVM) \cite{cortes1995}.  The concept is simple: given a binary classification problem (one in which the response variable takes one of two values), find the classifier that best separates the data points into their respective classes.  Here, the best classifier is the one that maximizes the margin between the separating hyperplane and the nearest data point of either class.  Given a linear threshold unit (LTU) defined by $w^Tx + b$, the margin is given by Equation~\ref{margin} \cite{boser1992}.
+%
+\begin{equation}
+\gamma = \min \limits_{x_i, y_i} \frac{y_i (w^T x_i + b)}{||w||}
+\label{margin}
+\end{equation}
+%
+where each $(x_i, y_i)$ is a point-label pair from the training data.  If a constraint is set such that $y_i (w^T x_i + b) \geq 1$, then maximizing this margin is the same as maximizing $\frac{1}{||w||}$, which is the same as minimizing $||w||^2$.  This produces a classic linear programming problem, as shown in Equation 1.2 \cite{boser1992}.
+%
+\begin{gather}
+\min \limits_{w} ||w||^2, \\ \notag
+s.t. \quad \forall i, \quad y_i w^T x_i \geq 1
+\end{gather}
+%
+This can be reformatted into a single optimization problem.  First, some lenience needs to be allowed, since the problem is likely not linearly separable.  This is done by the introduction of slack variables $\zeta$, which relax the constraint that requires $y_i w^T x_i$ to be greater than $1$ \cite{cortes1995}.  However, relaxing the constraints should come at a cost, and so a term is added to the optimization to ensure that not too much slack is allowed.  The linear programming problem now takes the form of Equation 1.3.
+%
+\begin{gather}
+\min \limits_{w} ||w||^2 + C \sum_i \zeta_i, \\ \notag
+s.t. \quad \forall i, \quad y_i w^T x_i \geq 1 - \zeta_i, \\ \notag
+\forall i, \quad \zeta_i > 0
+\end{gather}
+%
+The constraints can then be merged into Equation~\ref{merged}.  A constant of $\frac{1}{2}$ is inserted to simplify the future gradient calculation.
+%
+\begin{equation}
+\min \limits_{w} \frac{1}{2} ||w||^2 + C \sum_i max(0, 1-y_i w^T x_i)
+\label{merged}
+\end{equation}
+%
+It turns out that this optimization problem has now taken the form of a regularized loss minimization problem.  Here, the first term is the regularizer on the weights, ensuring that as many of the weights are zero or near-zero as possible.  This is desirable because it results in a simpler solution, since small weighted coefficients reduce the number of variables in the equation, and Occam's Razor states that simpler explanations are always more desirable than complex ones.  The latter term is the loss function known as the hinge loss, which quantifies the error encountered when classifying a data point.  The hinge loss penalizes points that fall inside the margin, and the extent to which these points are penalized is controlled by the parameter $C$.  This equation is convex, and thus can be solved efficiently via stochastic gradient descent (SGD), which is shown in Equation 1.5 \cite{bottou2010}.
+%
+\begin{gather}
+w := w - \eta \nabla J, \\ \notag
+\nabla J = \begin{cases} 
+      w             & if\ max(0, 1-y_i w^T x_i) = 0 \\ \notag
+      w - C y_i x_i & otherwise
+\end{cases}
+\end{gather}
+%
+Here, $J$ is the equation we are trying to minimize, and $\eta$ is the learning rate. For each point in the training data, the weight vector $w$ is updated using this rule.  This can be repeated over multiple iterations of the data until SGD has converged (or nearly converged).
+
+However, even allowing for lenience does not solve the problem of linear inseparability.  The key to solving this problem is the observation that linearly inseparable data can become linearly separable when mapped to a higher dimension.  Unfortunately, this can become computationally expensive, especially when the data already exist in a high-dimensional space.  However, it is not necessary to explicitly increase the dimensionality of the data.  Instead, kernel functions can replace the traditional dot product that is used when making a prediction on a new data point \cite{hofmann2006}.  This is known as the kernel trick, and allows SVM to learn nonlinear classifiers.
+
+\subsection{Support vector regression}
+\index{Support vector machine ! Regression}
+The concepts behind SVM can also extend to regression problems.  This time, a penalty is assigned to points that lie \textit{outside} the margin $\gamma$, rather than inside \cite{drucker1997}.  The slack variables are split into $\zeta$ and $\zeta^*$, which account for error on either side of the classifier.  The primal form of the optimization problem is given by Equation 1.6.
+%
+\begin{gather}
+\min \limits_{w} \frac{1}{2} ||w||^2 + C \sum_i (\zeta_i + \zeta^*_i), \\ \notag
+s.t. \quad \forall i, \quad y_i - w^T x_i \leq \gamma + \zeta_i, \\ \notag
+\forall i, \quad w^T x_i - y_i \leq \gamma + \zeta^*_i, \\ \notag
+\forall i, \quad \zeta_i, \zeta^*_i \geq 0
+\end{gather}
+%
+Again, kernels are typically employed, allowing for SVR to learn nonlinear functions.
+
+\subsection{Artificial neural networks}
+\index{Artificial neural network}
+The neural network is by far the most recognizable of the models presented here, and the one that has gained the most traction in a wide variety of applications.  The concept is based on the way neurons in the brain fire in biological neural networks.  The structure is represented by a network of artificial neurons, which are connected to form a directed, acyclic graph.  Each neuron takes a linear combination of its inputs with its own unique weights, passes the result through a nonlinear activation function, and sends the output to the neurons in the next layer of the network \cite{schmidhuber2014}.  The input layer is the layer into which the raw input flows, and the output layer is the resulting prediction (which can be a single value or a vector of values).  Any number of hidden layers can be added between the input and output layers.  The architecture can be tweaked to fit the application, where the hyperparameters are the number of hidden layers, the number of neurons in each layer, the weight initialization strategy, the activation function, the regularizer, and the cost function.  For traditional neural networks, a popular choice of activation function is the sigmoid, which is shown in Equation~\ref{sigmoid} for a given input $z$.
+%
+\begin{equation}
+\sigma(z) = \frac{1}{1 + e^{-z}}
+\label{sigmoid}
+\end{equation}
+%
+Neural networks learn through an algorithm called backpropagation \cite{rumelhart1986}.  Essentially, whenever a mistake is made during training, the weight of each of the neurons is updated in a way that will make the final prediction more accurate on similar future inputs.  A mistake is defined by the cost function, which will usually quantify the difference between the expected output and the actual output.  An example of a cost function is the quadratic loss, which can be defined in Equation~\ref{quadratic} for a single example $x$ with label $y$ and predicted label $y'$.
+%
+\begin{equation}
+J = \frac{1}{2} || y - y' ||^2
+\label{quadratic}
+\end{equation}
+%
+The updates can then be determined by taking the gradient of the cost function with respect to each of the weights.  The explanation for how to do this is lengthy, and the reader is referred to \cite{rumelhart1986} for more information.  Once these gradients are known, then the weights can be updated during training using SGD.
+
+\subsection{Convolutional neural networks}
+\index{Artificial neural network ! Convolutional}
+The convolutional neural network (CNN) a a special type of neural network that addresses image-related problems \cite{lecun1999}.  The structure is similar to a traditional neural network, but the input is an entire image rather than a single data point. Instead of each neuron having a vector of weights to apply to its input, it has a small grid of values known as a filter.  The filter is convolved with the input image to produce the output image, which is then passed on to the next layer.  As before, an activation function is used to ensure that the network doesn't simply learn a linear function.  The most common activation function for a CNN is the rectified linear unit (ReLU), which simply sets all negative values of the input to zero.  Pooling layers are also included to downsample the image and reduce its dimensions.  The filters, like weights, are learned through backpropagation.
+
+\subsection{Ensemble methods}
+Higher accuracy can often be achieved by using a collection, or ensemble, of classifiers.  The final prediction is taken by using either the mode (classification) or the mean (regression) of all classifiers in the ensemble.  The most popular implementation of this is the random forest, which are an ensemble of decision trees.
+
+\subsection{Decision trees}
+\index{Decision tree}
+Decision trees are a family of classifiers based on the hierarchical data structure of a tree, i.e. a data structure described by a root node with some number of children, with each of those having some number of children, and so on \cite{quinlan1986}.  In this case, the nodes (with the exception of leaf nodes) represent variables or features of the data, the branches represent all possible values (or ranges of values) those features can take, and the leaves are the class labels.  Notice that this is much different from what the nodes represent in a neural network; a decision tree has no weights.  Given a dataset, the tree is built by choosing features that best separate the examples into their respective classes.  Separability is higher when certain values correspond with certain class labels, while other values correspond with the other class labels.  Formally, this can be quantified using a heuristic such as entropy-based information gain.  The information gain of a feature $F$ with respect to a dataset $D$ is defined in Equation~\ref{gain}.
+%
+\begin{equation}
+Gain(D, F) = H(D) - \sum_{v \in Values(F)} \frac{|D_v|}{D}\ H(D_v)
+\label{gain}
+\end{equation}
+%
+where $D_v$ represents the subset of examples having the value $v$ for feature $F$.  The formula for entropy is defined in Equation~\ref{entropy}.
+%
+\begin{equation}
+H(S) = \sum_{c \in C} -D_c\ log (D_c)
+\label{entropy}
+\end{equation}
+%
+where $C$ is the set of all possible class labels, and $D_c$ is the proportion of examples having the class label $c$.
+
+Anytime a branch results in a subset of data that is homogenous in a class label, a leaf node of that label is placed at the end of the branch.  Using this strategy, the tree is built recursively in a greedy fashion \cite{hssina2014}.  First, the root is determined by the feature having the highest information gain.  A branch for each value of this feature is added, extending from the root.  Each child node is added by determining the next most informative feature, or by assigning a leaf node to the branch.  This continues until all leaves are class labels, or until all features have been used.  In the latter case, leaves must be assigned to all unresolved branches.  This is typically done by taking the most common label of the subset of data that corresponds to each branch.
+
+Prediction is done by taking the new data point and propagating it down the tree, following the path that defines the features of the data point.  For example, given a data point $x'$, if the root of the tree is feature $f$, and the value of $x's$ feature $f$ is $v$, then the prediction would follow the branch of the root that corresponds to value $v$.  If the child at the end of the branch is a leaf node, then the prediction is whatever class label is assigned to that leaf node.  Otherwise, the node must define a feature, and the data point will then follow the next branch based on its value for that feature.  This continues until a leaf node is reached, which by definition of the tree must be a class label.  That label is the final prediction.
+
+The benefit of using decision trees is that they can learn nonlinear functions relatively easily.  However, due to the lack of weights, there is no function or formula produced as the resulting model.  This can make it more difficult to infer meaning from the model with respect to the individual features.
+
+\subsection{Random forests}
+\index{Random forest}
+A random forest is simply an ensemble of decision trees.  The collection is built using a strategy called bagging (short for bootstrap aggregating) \cite{breiman2001}.  Random samples of the data are drawn with replacement to form a subset.  This data are used to build a single tree; however, when a new node is added, only a random subset of all available features are considered as candidate features.  Other variations and optimizations exist, but the basic idea remains the same.
+
+\section{Supplementary terms and procedures}
+Statistics and linear algebra lie at the heart of machine learning, and there are many statistical techniques that can be used irrespective of the chosen model.  A few of these model-agnostic procedures have been utilized and are defined here.
+
+\subsection{Principal component analysis}
+\index{Principal component analysis}
+Principal component analysis (PCA) is a dimensionality-reduction strategy often used as a preprocessing procedure for many machine learning algorithms \cite{tharwat2016}.  The idea is to find the components, which together can be thought of as an orthogonal set of basis vectors, along which the variance of the data is maximized.  In a $d$-dimensional space, there are $d$ principal components required to explain all of the variance in the data (assuming there are enough data points to sufficiently fill the space).  These are typically ordered from greatest variance to least variance, where the first principal component describes the direction along which the data vary the most.
+
+In most cases, almost all of the variance can be described by the first few principal components, sometimes called modes of variation.  Thus, the dimensionality of the data can be reduced without the loss of too much information.  This is done by projecting all data points onto the space formed by the first few principal components, which form an orthogonal basis.  Given an $n$-dimensional data point $x$, and an $n \times m$ matrix $A$ with the first $m$ principal components as its columns (learned from the dataset), $x$ can be projected onto the the space formed by $A$, resulting in a new $m$-dimensional data point $x'$.  This is shown in Equation~\ref{projection}.
+%
+\begin{equation} 
+x' = A^T x, x \in R^n, x' \in R^m
+\label{projection}
+\end{equation}
+%
+In machine learning, PCA is a popular approach to feature transformation.  It can take high-dimensional data of many (possibly correlated) variables, and reduce the dimensionality of the data down to a few linearly uncorrelated variables.  This helps 
+improve computation while also retaining the most important and most descriptive aspects of the data.
+
+PCA is sensitive to the scaling of the variables, meaning it is important to normalize or standardize the data prior to performing PCA.  One way to do this is by subtracting the mean and dividing by the standard deviation, ensuring that each feature has zero mean and unit variance.
+
+\subsection{Correlation}
+\index{Pearson moment-product correlation}
+Correlation is a measure of the relationship between two variables.  There are different methods of computing correlation, but the most common is the Pearson product-moment coefficient, which is calculated using Equation~\ref{pearson}.
+%
+\begin{equation}
+\rho(X, Y) = \frac{cov(X, Y)}{\sigma_X \sigma_Y} = \frac{E[(X - \mu_X)(Y - \mu_Y)]}{\sigma_X \sigma_Y}
+\label{pearson}
+\end{equation}
+%
+Correlation can be useful for examining the relationship between feature variables, as some models assume independence, and nonzero correlation implies dependence.  It can also be used to get a sense of how well each of the individual feature variables measures the response variable.  This is explored in chapter 3, where a large-scale data-driven correlation analysis is performed to determine which features have a high correlation between their value at a given point and their proximity to the crack surface.
+
+\subsection{Cross validation}
+\index{Cross Validation}
+Cross validation is a technique that is used during training.  The idea is to further split the training data into subsets, and then use some of those subsets as training data and some as validation data \cite{refaeilzadeh2009}.  The validation data is not used to train the model, but rather to test the accuracy of the model.  The difference between test data and validation data is that the results from validation data can safely be used to tweak the model, since it is technically still part of the original training data.  For this reason, cross-validation is often used in hyperparameter selection.
+
+A popular cross-validation technique is $k$-fold cross validation.  In this case, the training data is split into $k$ equally-sized subsets.  Then, $k-1$ of those subsets are used to train the model, and the last subset is used to test the model and produce an accuracy rating.  Usually, the chosen model is trained and tested $k$ times, with each of the $k$ subsets used once as validation data.  The mean of all $k$ accuracy ratings can be used as an estimate for the true accuracy of the model.  This can be done for multiple hyperparameter configurations, where the one with the best mean accuracy can be chosen as the best hyperparameter configuration.
+
+\subsection{Error metrics}
+\index{Error metrics}
+\index{Error metrics ! Root mean squared error}
+\index{Error metrics ! $R^2$}
+Regression problems require a special metric for measuring performance, since classification accuracy cannot apply.  There are many such metrics, and two are presented here.  Any metric must take the form of a function that operates on the actual real-valued labels $y$, and the inferred labels $\hat{y}$.  Each of these is a vector of size $n$, where $n$ is the number of samples in the test set.  The first metric is root-mean-squared-error (RMSE), which is calculated using Equation~\ref{rmse}.
+%
+\begin{equation}
+RMSE = \sqrt{\frac{\sum_{i=1}^n (\hat{y_i} - y_i)^2}{n}}
+\label{rmse}
+\end{equation}
+%
+RMSE is a standard error measurement technique.  It benefits from being in the same units as the predicted label.  The problem of RMSE is that it can be difficult to interpret, and there is no definite standard on what values of RMSE equate to a good model.  Another metric, $R^2$, attempts to remedy these problems, and is calculated using Equation~\ref{r_squared}.
+%
+\begin{equation}
+R^2 = 1 - \frac{\sum_{i=1}^n (\hat{y_i} - y_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}
+\label{r_squared}
+\end{equation}
+%
+Here, $y_i$ is the actual value of a data point, $\bar{y}$ is the mean of the actual data, and $\hat{y_i}$ is the predicted value for the data point.  The benefit of $R^2$ is that it more easily interpretable; values closer to ``1'' generally indicate a better fit.  It also accounts for the natural variance of the data, and is essentially a measure of the proportion of total variance that is explained by the model.
+
+\section{Machine learning approach}
+The next few chapters attempt to apply these concepts to approximate the rules that govern 3D crack evolution.  This is inspired by earlier work on training an artificial neural network with data from high-fidelity fracture simulations to predict real-time residual strength \cite{spear2011}.  In each case, the same general approach is followed.
+
+\begin{enumerate}
+  \item Acquire data through experimentation and simulation.
+  \item Determine a quantifiable definition of crack growth, and use that as the response variable.
+  \item Discover and extract features that are relevant to predicting the response variable, either from previous experience or through systematic feature selection.
+  \item Train a model to learn a hypothesis for the response variable's governing equation using the observed features.
+  \item Ensure that the learned hypothesis can generalize well, with relatively low error under the chosen evaluation metric.
+\end{enumerate}
+
+\bibliographystyle{ieeetr}
+\bibliography{\jobname}

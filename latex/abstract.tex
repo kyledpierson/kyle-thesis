@@ -1,0 +1,13 @@
+%%% -*-LaTeX-*-
+%%% This is the abstract for the thesis.
+%%% It is included in the top-level LaTeX file with
+%%%
+%%%    \preface    {abstract} {Abstract}
+%%%
+%%% The first argument is the basename of this file, and the
+%%% second is the title for this page, which is thus not
+%%% included here.
+%%%
+%%% The text of this file should be about 350 words or less.
+
+Predicting the growth behavior of microstructurally small fatigue cracks is a practically relevant problem in the materials-science and structural-engineering communities, especially for applications where the useful life of a structural component is almost entirely governed by the evolution of cracks that are as small as the microstructural features of the material.  However, understanding and predicting such complex behavior remains an open area of research.  The challenge of discovering the underlying rules that govern crack propagation at small length scales and in three dimensions is well-suited to formulation as a machine learning problem.  The complication then becomes defining what is meant by predicting crack growth, and choosing appropriate metrics for evaluation.  Once the problem is formulated, further decisions include extracting the relevant features (or alternatively, selecting a meaningful representation from which the model can learn the relevant features), selecting appropriate response variables, and choosing a model for learning.  This thesis explores various machine learning approaches to the aforementioned crack-growth problem.  Data were previously acquired through cyclic loading of an aluminum alloy sample, which was imaged using scanning electron microscope imaging, X-ray computed tomography, and X-ray diffraction microscopy.  Then, the data were reconstructed and digitized. In this work, an attempt is made to select features from this digitized dataset based on prior domain knowledge of crack growth.  Support vector regression (SVR) is applied to the time series of discretized crack fronts, using the selected features for each point to predict its $\frac{da}{dN}$ value.  Next, the experimental data are combined with simulation data to produce additional features.  These features are correlated with the crack surface to determine which ones are most influential in the growth of the crack.  These correlations help construct a representation of the data that can be used in a wider selection of machine learning models.  Specific approaches that are explored include using random forests and convolutional neural networks (CNN) to predict the positions and growth rates of points on the final crack surface using the surrounding microstructural representation.
