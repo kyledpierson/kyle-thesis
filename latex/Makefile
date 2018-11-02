@@ -118,48 +118,46 @@ TRUE		= true
 #                  images/figure_7.eps                    \
 #                  images/figure_8.eps
 
-FIGFILES	= images/actual.png                      \
-                  images/algorithm.png                   \
-                  images/cnn.png                         \
-                  images/control_surface.png             \
-                  images/convergence.png                 \
-                  images/correlations.png                \
-                  images/crack-dadn.png                  \
-                  images/crack-front-points-dadn.png     \
-                  images/crack-front-points-id.png       \
-                  images/crack-fronts-id.png             \
-                  images/crack-fronts-microstructure.png \
-                  images/dDs.png                         \
-                  images/depsilons.png                   \
-                  images/Ds.png                          \
-                  images/dsigmas.png                     \
-                  images/epsilon_other.png               \
-                  images/epsilon_vm_regions.png          \
-                  images/epsilons.png                    \
-                  images/exp_data_actamat.png            \
-                  images/grid.png                        \
-                  images/mesh_and_cycle_count.png        \
-                  images/offset_correlations.png         \
-                  images/pca_variance_combined.png       \
-                  images/plane_correlations.png          \
-                  images/predicted_cnn_euler_10_10.png   \
-                  images/predicted_cnn_pca_10_10_5.png   \
-                  images/predicted_cnn_pca_10_10.png     \
-                  images/predicted_xgboost_pca_6_6.png   \
-                  images/predicted_xgboost_pca_10_10.png \
-                  images/predicted_xgboost_euler_10_10.png \
-                  images/radial.png                      \
-                  images/radial_height_svr.png           \
-                  images/radial_height_xgboost.png       \
-                  images/radial_height.png               \
-                  images/radial-velocity.png             \
-                  images/random-split.png                \
-                  images/sigma_other.png                 \
-                  images/sigmas.png                      \
-                  images/surface_offset_distribution.png \
-                  images/svr-wedge.png                   \
-                  images/time-split.png                  \
-                  images/xgboost-wedge.png
+FIGFILES	= images/algorithm.png                    \
+                  images/cnn.png                          \
+                  images/convergence.png                  \
+                  images/correlations.png                 \
+                  images/correlations_offset_planes.png   \
+                  images/correlations_offset_surfaces.png \
+                  images/dDs.png                          \
+                  images/depsilons.png                    \
+                  images/distribution.png                 \
+                  images/Ds.png                           \
+                  images/dsigmas.png                      \
+                  images/epsilon_other.png                \
+                  images/epsilon_vm_regions.png           \
+                  images/epsilons.png                     \
+                  images/exp_data_actamat.png             \
+                  images/grid.png                         \
+                  images/mesh_and_cycle_count.png         \
+                  images/microstructure_fronts_id.png     \
+                  images/pca_variance.png                 \
+                  images/radial.png                       \
+                  images/radial_actual.png                \
+                  images/radial_dadn.png                  \
+                  images/radial_fronts_id.png             \
+                  images/radial_points_id.png             \
+                  images/radial_svr.png                   \
+                  images/radial_xgboost.png               \
+                  images/random_split.png                 \
+                  images/sigma_other.png                  \
+                  images/sigmas.png                       \
+                  images/surface_actual.png               \
+                  images/surface_cnn_euler_10_10.png      \
+                  images/surface_cnn_pca_10_10.png        \
+                  images/surface_cnn_pca_10_10_5.png      \
+                  images/surface_control.png              \
+                  images/surface_xgboost_euler_10_10.png  \
+                  images/surface_xgboost_pca_6_6.png      \
+                  images/surface_xgboost_pca_10_10.png    \
+                  images/time_split.png                   \
+                  images/wedge_svr.png                    \
+                  images/wedge_xgboost.png
 
 #PDFFILES	= data-driven-correlation.pdf   \
 #                  data-driven-correlation-supplementary.pdf
