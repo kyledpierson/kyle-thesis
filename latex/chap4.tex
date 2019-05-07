@@ -7,7 +7,7 @@ Using the results from the previous chapter, a new representation of the data ca
 The results from the previous chapter provided insight into which micromechanical features were relevant and meaningful in terms of correlation with crack growth.  These insights help determine the best way to restructure the data into a more manageable format with minimal loss of information.  This restructuring is imperative to the feasibility of efficient model training; using all 88 features of all $1.7235 \times 10^8$ points would render the computation intractable for the given hardware constraints.  It is recognized that many of the features are related to each other and thus should not be treated as independent variables in the context of the machine-learning algorithm.
 
 \index{Principal component analysis}
-The first step to reducing the dimensionality is to recognize that, in terms of correlation with crack path, the spatial-gradients of the micromechanical features (Figures ~\ref{fig:correlations}c, ~\ref{fig:correlations}d in Chapter 3) are more strongly correlated than the micromechanical features, themselves (Figure ~\ref{fig:correlations}a, ~\ref{fig:correlations}b in Chapter 3).  Furthermore, of the 44 spatial-gradient features, the 22 associated with cyclic change between loading and unloading (Figure ~\ref{fig:correlations}d from Chapter 3) have slightly greater values of Pearson correlation coefficients. Thus, the feature set considered for input to the machine-learning models is down-selected to the 22 $\nabla (\Delta \lambda)$ features identified in Chapter 3.
+The first step to reducing the dimensionality is to recognize that, in terms of correlation with crack path, the spatial-gradients of the micromechanical features (Figures ~\ref{fig:correlations}c, ~\ref{fig:correlations}d in Chapter 3) are more strongly correlated than the micromechanical features, themselves (Figures ~\ref{fig:correlations}a, ~\ref{fig:correlations}b in Chapter 3).  Furthermore, of the 44 spatial-gradient features, the 22 associated with cyclic change between loading and unloading (Figure ~\ref{fig:correlations}d from Chapter 3) have slightly greater values of Pearson correlation coefficients. Thus, the feature set considered for input to the machine-learning models is down-selected to the 22 $\nabla (\Delta \lambda)$ features identified in Chapter 3.
 
 Next, principal component analysis (PCA) is applied to this set of 22 features to further reduce the dimensionality of the feature set.  As described in Section 1.2.1, PCA provides the orthogonal basis vectors in decreasing order of the amount of variance explained along their directions.  Prior to running PCA, the features are normalized by subtracting the mean and dividing by the standard deviation, such that the units are of the same order and magnitude.  Results from the PCA show that the first three modes happen to explain $96\%$ of the total variance (Figure \ref{fig:pca_variance}), and those three are selected as the basis for the new data.  In other words, the 22 features at each point in the microstructure are projected to this basis, resulting in a 3-vector based on the micromechanical fields at each point.
 
@@ -95,7 +95,7 @@ Table \ref{table:model-comparison} compares the results of each model.  Figure \
     \includegraphics[width=0.42\textwidth]{surface_xgboost_pca_10_10} %f
     \includegraphics[width=0.42\textwidth]{surface_xgboost_pca_6_6} %g
     \includegraphics[width=0.42\textwidth]{surface_xgboost_euler_10_10} %h
-    \caption{\textbf{Actual and predicted crack surfaces (a)} Actual crack surface
+    \caption{Actual and predicted crack surfaces \textbf{(a)} Actual crack surface
              \textbf{(b)} Hypothetical crack surface
              \textbf{(c)} CNN prediction, using PCA vectors and a $10 \times 10 \times 10 \mu m$ region (trained for 10 epochs)
              \textbf{(d)} CNN prediction, using PCA vectors and a $10 \times 10 \times 10 \mu m$ region (trained for 5 epochs)
@@ -144,11 +144,11 @@ The wedge prediction strategy from Chapter 2 is also implemented here, as it has
     \includegraphics[height=0.22\textwidth]{wedge_xgboost}
     \includegraphics[height=0.22\textwidth]{radial_svr}
     \includegraphics[height=0.22\textwidth]{wedge_svr}
-    \caption{\textbf{Actual and predicted radial crack surfaces (a)}  Actual crack surface.
+    \caption{Actual and predicted radial crack surfaces \textbf{(a)}  Actual crack surface.
              \textbf{(b)} XGBoost prediction, using a radial propagation strategy
              \textbf{(c)} XGBoost prediction, using a wedge propagation strategy
              \textbf{(d)} SVR prediction, using a radial propagation strategy
-             \textbf{(e)} SVR prediction, using a wedge propagation strategy
+             \textbf{(e)} SVR prediction, using a wedge propagation strategy.
              Each of these predictions have been cropped to the shape of the measured crack surface inside of the final crack front. }
   \label{fig:radial_predictions}
 \end{figure}
